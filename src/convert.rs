@@ -14,41 +14,64 @@ pub(crate) fn ffi_to_entry_point(ffi_type: &ffi::SpvReflectEntryPoint) -> Reflec
         },
         shader_stage: ffi_to_shader_stage_flags(ffi_type.shader_stage),
         input_variables: unsafe {
-            std::slice::from_raw_parts(
-                ffi_type.input_variables,
-                ffi_type.input_variable_count as usize,
-            )
+            if ffi_type.input_variable_count > 0 {
+                std::slice::from_raw_parts(
+                    ffi_type.input_variables,
+                    ffi_type.input_variable_count as usize,
+                )
+            } else {
+                &[]
+            }
         }
         .iter()
         .map(|&var| ffi_to_interface_variable(var))
         .collect(),
         output_variables: unsafe {
-            std::slice::from_raw_parts(
-                ffi_type.output_variables,
-                ffi_type.output_variable_count as usize,
-            )
+            if ffi_type.output_variable_count > 0 {
+                std::slice::from_raw_parts(
+                    ffi_type.output_variables,
+                    ffi_type.output_variable_count as usize,
+                )
+            } else {
+                &[]
+            }
         }
         .iter()
         .map(|&var| ffi_to_interface_variable(var))
         .collect(),
         descriptor_sets: unsafe {
-            std::slice::from_raw_parts(
-                ffi_type.descriptor_sets,
-                ffi_type.descriptor_set_count as usize,
-            )
+            if ffi_type.descriptor_set_count > 0 {
+                std::slice::from_raw_parts(
+                    ffi_type.descriptor_sets,
+                    ffi_type.descriptor_set_count as usize,
+                )
+            } else {
+                &[]
+            }
         }
         .iter()
         .map(|set| ffi_to_descriptor_set(set))
         .collect(),
         used_uniforms: unsafe {
-            std::slice::from_raw_parts(ffi_type.used_uniforms, ffi_type.used_uniform_count as usize)
+            if ffi_type.used_uniform_count > 0 {
+                std::slice::from_raw_parts(
+                    ffi_type.used_uniforms,
+                    ffi_type.used_uniform_count as usize,
+                )
+            } else {
+                &[]
+            }
         }
         .to_vec(),
         used_push_constants: unsafe {
-            std::slice::from_raw_parts(
-                ffi_type.used_push_constants,
-                ffi_type.used_push_constant_count as usize,
-            )
+            if ffi_type.used_push_constant_count > 0 {
+                std::slice::from_raw_parts(
+                    ffi_type.used_push_constants,
+                    ffi_type.used_push_constant_count as usize,
+                )
+            } else {
+                &[]
+            }
         }
         .to_vec(),
         local_size: ReflectEntryPointLocalSize {
@@ -127,8 +150,11 @@ pub(crate) fn ffi_to_descriptor_set(
     let ffi_type = unsafe { &*ffi_type_ptr };
     let mut bindings: Vec<ReflectDescriptorBinding> =
         Vec::with_capacity(ffi_type.binding_count as usize);
-    let ffi_bindings =
-        unsafe { std::slice::from_raw_parts(ffi_type.bindings, ffi_type.binding_count as usize) };
+    let ffi_bindings = if ffi_type.binding_count > 0 {
+        unsafe { std::slice::from_raw_parts(ffi_type.bindings, ffi_type.binding_count as usize) }
+    } else {
+        &[]
+    };
     for ffi_binding in ffi_bindings {
         bindings.push(ffi_to_descriptor_binding(*ffi_binding));
     }
@@ -472,8 +498,11 @@ pub(crate) fn ffi_to_binding_array_traits(
 pub(crate) fn ffi_to_block_variable(
     ffi_type: &ffi::SpvReflectBlockVariable,
 ) -> ReflectBlockVariable {
-    let ffi_members =
-        unsafe { std::slice::from_raw_parts(ffi_type.members, ffi_type.member_count as usize) };
+    let ffi_members = if ffi_type.member_count > 0 {
+        unsafe { std::slice::from_raw_parts(ffi_type.members, ffi_type.member_count as usize) }
+    } else {
+        &[]
+    };
     let members: Vec<ReflectBlockVariable> = ffi_members
         .iter()
         .map(|member| ffi_to_block_variable(member))
