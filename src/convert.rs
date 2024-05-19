@@ -99,8 +99,11 @@ pub(crate) fn ffi_to_interface_variable(
 pub(crate) fn ffi_to_type_description(
     ffi_type: &ffi::SpvReflectTypeDescription,
 ) -> ReflectTypeDescription {
-    let ffi_members =
-        unsafe { std::slice::from_raw_parts(ffi_type.members, ffi_type.member_count as usize) };
+    let ffi_members = if ffi_type.member_count > 0 {
+        unsafe { std::slice::from_raw_parts(ffi_type.members, ffi_type.member_count as usize) }
+    } else {
+        &[]
+    };
     let members: Vec<ReflectTypeDescription> = ffi_members
         .iter()
         .map(|member| ffi_to_type_description(member))
