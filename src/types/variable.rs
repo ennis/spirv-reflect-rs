@@ -43,6 +43,7 @@ bitflags! {
         const EXTERNAL_MASK = 2_031_616;
         const STRUCT = 268_435_456;
         const ARRAY = 536_870_912;
+        const REF = 1_073_741_824;
     }
 }
 
@@ -144,6 +145,7 @@ pub enum ReflectStorageClass {
     AtomicCounter,
     Image,
     StorageBuffer,
+    PhysicalStorageBuffer,
 }
 
 impl Default for ReflectStorageClass {

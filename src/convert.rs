@@ -436,6 +436,7 @@ pub(crate) fn ffi_to_storage_class(ffi_type: ffi::SpvStorageClass) -> ReflectSto
         ffi::SpvStorageClass__SpvStorageClassImage => ReflectStorageClass::Image,
         ffi::SpvStorageClass__SpvStorageClassStorageBuffer => ReflectStorageClass::StorageBuffer,
         ffi::SpvStorageClass__SpvStorageClassMax => ReflectStorageClass::Undefined,
+        ffi::SpvStorageClass__SpvStorageClassPhysicalStorageBuffer => ReflectStorageClass::PhysicalStorageBuffer,
         _ => {
             println!("value is {}", ffi_type);
             unimplemented!()
